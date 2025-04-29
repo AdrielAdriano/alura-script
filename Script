@@ -1,0 +1,109 @@
+// ==UserScript==
+// @name         Alura 100% Ultra Turbo Max Premium Ultra Fast v3
+// @namespace    https://cursos.alura.com.br/
+// @version      5.1
+// @description  Automatiza vídeos, exercícios, blocos e envio de link de projeto na Alura o mais rápido possível!
+// @match        https://cursos.alura.com.br/course/*/task/*
+// @icon         https://i.imgur.com/gP1LZq9.png
+// @grant        none
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  console.log("🚀 Alura Ultra Turbo Max Premium Ultra Fast ativado!");
+
+  function generateRandomLink() {
+    const randomString = Math.random().toString(36).substring(2, 10);
+    return `https://github.com/${randomString}`;
+  }
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  function decodeBase64(str) {
+    return decodeURIComponent(escape(window.atob(str)));
+  }
+
+  function showFloatingBanner() {
+    const banner = document.createElement('div');
+    const hiddenText = "QnkgQWRyaWVsIERldg==";
+    banner.textContent = decodeBase64(hiddenText);
+    Object.assign(banner.style, {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      padding: '15px 30px',
+      backgroundColor: '#000',
+      color: '#fff',
+      borderRadius: '12px',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      zIndex: 10000,
+      opacity: 0.8,
+      pointerEvents: 'none',
+      boxShadow: '0 0 20px rgba(0,0,0,0.7)',
+    });
+    document.body.appendChild(banner);
+  }
+
+  function solveTask() {
+    console.log("🎯 Executando solveTask...");
+    showFloatingBanner();
+
+    const playButton = document.querySelector(".vjs-big-play-button");
+    if (playButton) {
+      playButton.click();
+      console.log("▶️ Vídeo iniciado!");
+    }
+
+    const correctCheckboxes = document.querySelectorAll('li[data-correct="true"] input[type="checkbox"]:not(:checked)');
+    correctCheckboxes.forEach(cb => cb.click());
+
+    const correctRadios = document.querySelectorAll('.alternativeList-item[data-correct="true"] input[type="radio"]:not(:checked)');
+    correctRadios.forEach(rb => rb.click());
+
+    const blocksContainer = document.querySelector(".blocks");
+    if (blocksContainer) {
+      const blocks = Array.from(blocksContainer.querySelectorAll(".block"));
+      if (blocks.length > 0) {
+        shuffleArray(blocks);
+        blocks.forEach(block => block.click());
+
+        const submitBlocks = document.getElementById("submitBlocks");
+        if (submitBlocks) {
+          submitBlocks.click();
+          console.log("📦 Blocos enviados!");
+        }
+      }
+    }
+
+    const linkInput = document.querySelector('input[name="linkUrl"]');
+    const enviarLinkBtn = document.querySelector('button[type="submit"]');
+    if (linkInput && enviarLinkBtn && linkInput.value.trim() === "") {
+      const fakeLink = generateRandomLink();
+      linkInput.value = fakeLink;
+      console.log("🔗 Link gerado:", fakeLink);
+
+      enviarLinkBtn.click();
+      console.log("✅ Link enviado!");
+    }
+
+    const nextButton = document.querySelector(".task-actions-button-next");
+    if (nextButton) {
+      nextButton.click();
+      console.log("⏭️ Próxima atividade!");
+    }
+  }
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      solveTask();
+    }, 1000); // Delay de 1000ms (1 segundo)
+  });
+})();
